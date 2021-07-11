@@ -1,46 +1,132 @@
-# Getting Started with Create React App
+# Letmeask :purple_heart:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## O que é?
+Letmeask é uma aplicação que permite a criação de salas de perguntas e respostas de maneira dinâmica e interativa, desenvolvida com base em ReactJS, utilizando o Firebase para auxiliar o processo de construção.
 
-## Available Scripts
+## Desenvolvimento do projeto Let Me Ask
 
-In the project directory, you can run:
+### Aula 1
+- Para criar o projeto com TypeScript, utilizamos o comando `yarn create react-app nome-do-projeto --template typescript`
 
-### `yarn start`
+- Endereço da pasta do projeto: \Fabinho\Documents\Alessandro\Programação\Projetos\letmeask>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Aula 2
+- Instalação do SASS com o comando `yarn add node-sass@^5.0.0`
+- Criação de arquivos scss
+- Instalação da biblioteca React Router DOM para fazer o roteamento através do comando `yarn add react-router-dom`
+- Instalação dos tipos do React Router DOM através de `yarn add @types/react-router-dom -D` (é necessário instalar quando a dependência não foi desenvolvida utilizando TypeScript)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+#### React Router Dom
+- Permite o acesso a diferentes rotas da aplicação
 
-### `yarn test`
+#### BrowseRouter
+Contém as diferentes rotas que podem ser acessadas
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### Router
+Descreve uma rota da aplicação e seu componente associado. Possui alguns atributos:
 
-### `yarn build`
+- **path** - descreve a rota para acesso (sem a URL base)
+- **component** - descreve o componente que será acessado
+- **exact** - exige que, para acessar a rota, o endereço seja escrito exatamente como definido no path (você pode escrever também exact={true} ou exact={false})
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### Trocar de página com buttons
+- Importar o useHistory do React Router Dom
+- Criar um hook para o useHistory (const test = useHistory())
+- É possível alterar a página através do push (test.push("/caminho")). Isso pode ser definido dentro de uma função que será executada com o onClick
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```javascript
+const history = useHistory();
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+function navigateToNewRoom() {
+	history.push('/rooms/new')
+}
 
-### `yarn eject`
+return (
+	<button className="create-room" onClick={navigateToNewRoom}>
+		<img src={googleIconImg} alt="Logo do Google" />
+			Crie sua sala com o Google
+	</button>
+)
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+#### Trocar de página com âncoras
+- Importar o Link
+- Usar o component link no lugar da âncora com o endereço descrito através do atributo **to**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```javascript
+return (
+	<p>Quer entrar em uma sala existente? <Link to="/">Clique aqui</Link></p>
+)
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+#### Resumo sobre useEffect
+useEffect dispara uma função sempre que determinada condição é realizada, ou, mais especificamente, quando determinado item é alterado.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+A função useEffect recebe dois parâmetros. O primeiro é a função a ser executada e o segundo é um array com os itens que estão sendo monitorados
 
-## Learn More
+###### Exemplo: Executar função sempre que a variável user mudar
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+useEffect(() => {}, [user])
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+###### Exemplo#2: Executar função apenas uma vez, quando o componente é carregado
+
+useEffect(() => {}, [])
+
+#### Novos tipos vistos para o TypeScript
+- Para objetos, **object**
+- Para funções, **() => (tipo de retorno)**
+- Para promises, **Promise<(tipo de retorno da promise - string, void, etc)>**
+- Para componentes do React, **ReactNode** (necessário importar do React)
+
+### Aula 3
+- Adição da função de criação de salas
+- Adição de uma página para as salas
+- Utilização do Switch do React Router DOM
+
+#### Switch
+O Switch impede que duas rotas sejam chamadas ao mesmo tempo, sendo mais eficiente, em alguns casos, que o atributo **exact**. Se uma condição de endereço de URL é satisfeita, o Switch utiliza apenas ela.
+
+#### Regras para bancos no Firebase
+As regras criadas foram as seguintes:
+
+```json
+{
+  "rules": {
+    "rooms": {
+      ".read": false,
+      ".write": "auth != null",
+      "$roomId": {
+        ".read": true,
+        ".write": "auth != null && (!data.exists() || data.child('authorId').val() == auth.id)",
+        "questions": {
+          ".read": true,
+          ".write": "auth != null && (!data.exists() || data.parent().child('authorId').val() == auth.id)",
+          "likes": {
+            ".read": true,
+            ".write": "auth != null && (!data.exists() || data.child('authorId').val() == auth.id)"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+##### Para todas as salas
+- É proibida a leitura dos dados de **todas** as salas ao mesmo tempo
+- É permitida a criação de salas se o usuário estiver autenticado
+
+##### Para uma sala específica
+- É permitida a leitura dos dados da sala
+- Usuários autenticados podem criar salas e alterar/remover os dados das salas que criaram
+- Usuários não podem alterar/remover salas criadas por outros usuários
+
+##### Para as questões das salas
+- É permitida a leitura dos dados da pergunta
+- Usuários autenticados podem criar perguntas
+- Depois de criadas, as perguntas só podem ser alteradas/removidas pelo **criador da sala** (o usuário só pode criar a pergunta, apenas)
+
+##### Para os likes das perguntas
+- É permitida a leitura dos dados dos likes
+- Usuários autenticados podem dar likes
+- Os usuários que deram likes podem alterar/remover seus likes, mas não podem alterar/remover likes de outros usuários
