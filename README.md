@@ -8,8 +8,6 @@ Letmeask é uma aplicação que permite a criação de salas de perguntas e resp
 ### Aula 1
 - Para criar o projeto com TypeScript, utilizamos o comando `yarn create react-app nome-do-projeto --template typescript`
 
-- Endereço da pasta do projeto: \Fabinho\Documents\Alessandro\Programação\Projetos\letmeask>
-
 ### Aula 2
 - Instalação do SASS com o comando `yarn add node-sass@^5.0.0`
 - Criação de arquivos scss
