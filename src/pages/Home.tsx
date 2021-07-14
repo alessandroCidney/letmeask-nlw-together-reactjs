@@ -37,8 +37,15 @@ export function Home() {
 		// roomCode contém o código da sala
 		const roomRef = await database.ref(`rooms/${roomCode}`).get();
 
+		// Se a sala não existe, não será permitido entrar
 		if(!roomRef.exists()) {
 			alert('Room does not exists');
+			return;
+		}
+
+		// Se a sala já foi encerrada (ou seja, se o item endedAt existe em roomRef), não será permitido entrar
+		if(roomRef.val().endedAt) {
+			alert("Room already closed");
 			return;
 		}
 
@@ -66,6 +73,11 @@ export function Home() {
 						Ou entre em uma sala
 					</div>
 					<form onSubmit={handleJoinRoom}>
+						{/*
+							onChange altera o valor de newRoom conforme algo é digitado
+							Após a alteração, o input recebe o valor de roomCode (alterado sempre que digitamos algo)
+							Ao submeter, a função handleJoinRoom utiliza o valor de roomCode, sem precisar pegar do input
+						*/}
 						<input 
 							type="text"
 							placeholder="Digite o código da sala"

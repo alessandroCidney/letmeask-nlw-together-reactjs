@@ -7,6 +7,7 @@ Letmeask é uma aplicação que permite a criação de salas de perguntas e resp
 
 ### Aula 1
 - Para criar o projeto com TypeScript, utilizamos o comando `yarn create react-app nome-do-projeto --template typescript`
+- Instalar firebase com `yarn add firebase`
 
 ### Aula 2
 - Instalação do SASS com o comando `yarn add node-sass@^5.0.0`
@@ -128,3 +129,70 @@ As regras criadas foram as seguintes:
 - É permitida a leitura dos dados dos likes
 - Usuários autenticados podem dar likes
 - Os usuários que deram likes podem alterar/remover seus likes, mas não podem alterar/remover likes de outros usuários
+
+#### useParams
+- Importar do React Router DOM
+- Permite que captemos os parâmetros passados através de uma rota, como o ID de uma página, por exemplo
+
+#### Tipagem para objetos (TypeScript)
+- A tipagem para outros elementos assemelha-se ao seguinte trecho de código:
+
+```typescript
+type TipoTeste = {
+  item1: string;
+  item2: number;
+  item3?: number;
+  item4: string[];
+  item5: {
+    item51: string;
+    item52: number;
+  }
+  item6: number[];
+}
+```
+
+- Para objetos cujos valores das chaves variam, usamos `Record`:
+
+```typescript
+type TipoTeste2 = Record<string, string>
+```
+
+- Se houver mais de um objeto cujas chaves variam dentro de outro:
+
+```typescript
+type TipoTeste3 = Record<string, Record<string, number>>
+```
+
+#### Salvando dados no Firebase
+
+##### Para salvar dados únicos
+- Usa-se o método `set()` na referência (`database.ref('')`)
+
+##### Para salvar dados dentro de uma lista já existente
+- Usa-se o método `push()` na referência (`database.ref('')`)
+
+#### Ouvindo eventos no Firebase
+
+##### Para ouvir uma única vez
+- Usa-se o método `once` na referência
+
+```javascript
+const any = database.ref('...');
+
+any.once('evento', () => {})
+```
+
+##### Para ouvir sempre que algo for alterado no banco de dados
+- Usa-se o método `on` na referência
+
+```javascript
+const any = database.ref('...');
+
+any.on('evento', () => {});
+```
+
+##### Observação
+**Em caso de dúvidas, checar a documentação oficial do Firebase**.
+
+## Dicas
+- Dar uma olhada no pacote React Modal
